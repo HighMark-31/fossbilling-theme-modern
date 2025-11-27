@@ -1,0 +1,39 @@
+{% if product and product.pricing.type is not empty %}
+    <div class="modern-pricing">
+        {% if product.pricing.type == 'free' %}
+            <span class="modern-badge modern-badge-success">{{ 'Free'|trans }}</span>
+        {% elseif product.pricing.type == 'once' %}
+            <span class="text-2xl font-bold text-gray-900 dark:text-white">
+                {{ product.pricing.price | money_convert }}
+            </span>
+            <span class="text-sm text-gray-500 dark:text-gray-400">{{ 'One time'|trans }}</span>
+        {% elseif product.pricing.type == 'recurrent' %}
+            <span class="text-2xl font-bold text-gray-900 dark:text-white">
+                {{ product.pricing.price | money_convert }}
+            </span>
+            <span class="text-sm text-gray-500 dark:text-gray-400">
+                {% if product.pricing.month == 1 %}
+                    {{ '/ month'|trans }}
+                {% elseif product.pricing.month == 3 %}
+                    {{ '/ quarter'|trans }}
+                {% elseif product.pricing.month == 6 %}
+                    {{ '/ semi-annual'|trans }}
+                {% elseif product.pricing.month == 12 %}
+                    {{ '/ year'|trans }}
+                {% elseif product.pricing.month == 24 %}
+                    {{ '/ biennial'|trans }}
+                {% elseif product.pricing.month == 36 %}
+                    {{ '/ triennial'|trans }}
+                {% else %}
+                    {{ '/ every %s months'|trans|format(product.pricing.month) }}
+                {% endif %}
+            </span>
+        {% endif %}
+        
+        {% if product.pricing.setup_price > 0 %}
+            <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {{ '+ %s setup fee'|trans|format(product.pricing.setup_price | money_convert) }}
+            </div>
+        {% endif %}
+    </div>
+{% endif %}

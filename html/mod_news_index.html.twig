@@ -1,0 +1,78 @@
+{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
+
+{% block meta_title %}{{ 'News'|trans }}{% endblock %}
+
+{% block body_class %}news-index{% endblock %}
+{% block breadcrumb %}
+    <li class="flex items-center">
+        <svg class="h-4 w-4 mx-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+        </svg>
+        <span class="text-gray-900 dark:text-gray-100 font-medium">{{ 'News'|trans }}</span>
+    </li>
+{% endblock %}
+
+{% block content %}
+    <div class="flex flex-col space-y-6">
+        <div class="modern-card">
+            <div class="card-header border-b border-gray-200 dark:border-gray-700 p-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">{{ 'News & Announcements'|trans }}</h1>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">{{ 'Track our latest information and updates.'|trans }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-6">
+                {% set posts = guest.news_get_list({ "page": request.page, "per_page": 5 }) %}
+                {% for i, post in posts.list %}
+                    <div class="mb-6 last:mb-0 border-b border-gray-200 dark:border-gray-700 last:border-0 pb-6 last:pb-0">
+                        <div class="flex flex-col space-y-3">
+                            <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                <a href="{{ '/news'|link }}/{{ post.slug }}" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-200">
+                                    {{ post.title }}
+                                </a>
+                            </h3>
+                            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                                <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                {{ post.updated_at|format_datetime }}
+                            </div>
+                            <div class="prose dark:prose-invert max-w-none text-gray-600 dark:text-gray-300">
+                                {% if post.excerpt %}
+                                    {{ post.excerpt|truncate(200)|markdown }}
+                                {% else %}
+                                    {{ post.content|truncate(200)|markdown }}
+                                {% endif %}
+                            </div>
+                            <div>
+                                <a href="{{ '/news'|link }}/{{ post.slug }}" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-medium transition-colors duration-200">
+                                    {{ 'Continue reading'|trans }}
+                                    <svg class="h-4 w-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-8">
+                        <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 mb-4">
+                            <svg class="h-6 w-6 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">{{ 'No news available'|trans }}</h3>
+                        <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ 'Check back later for updates and announcements.'|trans }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            {% if posts.pages > 1 %}
+                <div class="card-footer bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 p-4">
+                    {{ include('partial_pagination.html.twig', { 'list': posts }) }}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

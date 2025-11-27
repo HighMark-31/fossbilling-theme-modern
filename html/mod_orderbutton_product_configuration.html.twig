@@ -1,0 +1,79 @@
+{% if not product %}
+    {% set product = request.product ? guest.product_get({"id":request.product}) : null %}
+{% endif %}
+<div class="accordion-item">
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#order" aria-expanded="false" aria-controls="order">
+            <svg class="svg-icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 110 8 4 4 0 010-8m-2 14c-.25 0-.46-.18-.5-.42l-.37-2.65c-.63-.25-1.17-.59-1.69-.99l-2.49 1.01c-.22.08-.49 0-.61-.22l-2-3.46c-.13-.22-.07-.49.12-.64L4.57 13l-.07-1 .07-1L2.46 9.37c-.19-.15-.25-.42-.12-.64l2-3.46c.12-.22.39-.3.61-.22l2.49 1.01c.52-.39 1.06-.73 1.69-.98l.37-2.65C9.54 2.18 9.75 2 10 2h4c.25 0 .46.18.5.42l.37 2.65c.63.25 1.17.59 1.69.98l2.49-1.01c.22-.09.49.01.61.22l2 3.46c.13.22.07.49-.12.64L19.43 11l.07 1-.07 1 2.11 1.63c.19.15.25.42.12.64l-2 3.46c-.12.22-.39.3-.61.22l-2.49-1.01c-.53.39-1.07.73-1.69.98l-.37 2.65c-.04.24-.25.42-.5.42h-4z"/></svg>
+            {{ 'Product Configuration'|trans }}
+        </button>
+    </h2>
+    {% if product %}
+    <div id="order" class="accordion-collapse collapse">
+        <div class="accordion-body">
+            <div class="accordion-inner">
+                <form method="post" class="api-form form-{{ product.form_id ? guest.formbuilder_get( {"id":product.form_id}).style.type : 0 }}"
+                      action="{{ 'api/guest/cart/add_item'|link }}" data-api-msg="{{ 'Product was added to shopping cart'|trans }}"
+                      data-api-redirect="{{ 'order'|link({ 'checkout' : 1 }) }}{% if request.show_custom_form_values %}&show_custom_form_values=1{% endif %}">
+                    <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}"/>
+
+                    {% set product_details %}
+                        <div class="well">
+                            <h3 class="mb-2">{{ product.title }}</h3>
+                            {% if product.description %}
+                                {{ product.description | markdown }}
+                            {% endif %}
+                            <hr>
+                            <h5 class="mt-4 mb-1"><strong>{{ 'Billing'|trans }}</strong></h5>
+                            <div class="row">
+                                <div class="col-12 col-md-4 col-xl-3">
+                                    {% if product.pricing.type == 'recurrent' %}
+                                        <span>{{ 'Billing cycle'|trans }}</span>
+                                    {% else %}
+                                        <span>{{ 'One-time payment'|trans }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col">
+                                    {% if product.pricing.type == 'recurrent' %}
+                                        {% set periods = guest.system_periods %}
+                                        <select class="form-select" name="period" id="period-selector">
+                                            {% for code,prices in product.pricing.recurrent %}
+                                                {% if prices.enabled %}
+                                                    <option value="{{code}}" data-bb-price="{{ prices.price | money_convert }}" name="period">{{ prices.price | money_convert }} ({{ periods[code] }})</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    {% elseif product.pricing.type == 'free' %}
+                                        <span class="badge bg-success">{{ 0 | money_convert }}</span>
+                                    {% else %}
+                                        <span class="badge bg-success">{{ product.pricing.once.price | money_convert }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endset %}
+
+                    {% set tpl = "mod_service"~product.type~"_order_form.html.twig" %}
+                    {% if guest.system_template_exists({"file":tpl}) %}
+                        {{ include(tpl, product) }}
+                    {% elseif product.form_id and guest.extension_is_on({"mod":"formbuilder"}) %}
+                        {{ product_details }}
+                        {% set form = guest.formbuilder_get({"id":product.form_id}) %}
+                        {{ include('mod_formbuilder_build.html.twig', product) }}
+                    {% else %}
+                        {{ product_details }}
+                    {% endif %}
+
+                    {{ include('mod_orderbutton_addons.html.twig', product) }}
+
+                    <input type="hidden" name="multiple" value="1" />
+                    <input type="hidden" name="id" value="{{ product.id }}" />
+                    <div class="mt-2 mb-0">
+                        <button type="submit" class="btn btn-primary" id="config-next">{{ 'Next'|trans }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>

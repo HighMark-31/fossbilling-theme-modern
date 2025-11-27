@@ -1,0 +1,28 @@
+{% set loader_nr = request.loader | default("8") %}
+{% set loader_url = ('img/assets/loaders/loader'~loader_nr~'.gif') %}
+
+<div class="card border-0 mb-0">
+  <div class="card-body p-2">
+    <div id="orderManager" class="accordion">
+      {{ include('mod_orderbutton_choose_product.html.twig') }}
+      {{ include('mod_orderbutton_product_configuration.html.twig') }}
+      {% if not client %}
+        {{ include('mod_orderbutton_client.html.twig') }}
+      {% endif %}
+      {{ include('mod_orderbutton_checkout.html.twig') }}
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#payment-html" aria-expanded="false" aria-controls="payment-html">
+            <svg class="svg-icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 7h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7zm3 3h9M6 14h12"/></svg>
+            {{ 'Payment method'|trans }}
+          </button>
+        </h2>
+        <div id="payment-html" class="accordion-collapse collapse">
+          <div class="accordion-body p-0">
+            <iframe id="payment-iframe" src="" frameborder="0" scrolling="no" onload="resizeIframe(this)" style="width:100%"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

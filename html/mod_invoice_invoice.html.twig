@@ -1,0 +1,226 @@
+{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
+
+{% import "macro_functions.html.twig" as mf %}
+
+{% set nr = invoice.serie ~ "%05s"|format(invoice.nr) %}
+
+{% block meta_title %}{{ 'Invoice'|trans }} #{{ nr }}{% endblock %}
+
+{% block body_class %}invoice-invoice{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ '/invoice'|link }}">{{ 'Invoices'|trans }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">#{{ nr }}</li>
+{% endblock %}
+
+{% block content %}
+{% set seller = invoice.seller %}
+{% set buyer = invoice.buyer %}
+{% set company = guest.system_company %}
+    <div class="row mb-3">
+        <div class="col-md-12">
+            {% if invoice.status == 'unpaid' %}
+                <div class="modern-card">
+                <div class="card-body p-4">
+                    <h5 class="mb-1 text-lg font-bold text-gray-900 dark:text-white">{{ 'Payment methods'|trans }}</h5>
+                    <p class="small text-gray-500 dark:text-gray-400 mb-4">{{ 'Please choose a payment type and pay for your chosen products.'|trans }}</p>
+                    <form method="post" action="{{ 'api/guest/invoice/payment'|link }}" class="api-form" data-api-redirect="{{ ('invoice/'~invoice.hash)|link({ 'auto_redirect': 1 }) }}">
+                        <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}"/>
+                        <input type="hidden" name="hash" value="{{ invoice.hash }}"/>
+                        <div class="flex flex-wrap gap-3">
+                            {% for gtw in guest.invoice_gateways %}
+                                {% if invoice.currency in gtw.accepted_currencies %}
+                                {% set banklink = 'invoice/banklink'|link %}
+                                <div class="invoice-gateway rounded-2 p-2 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
+                                    <input type="radio" class="btn-check hidden" name="gateway_id" gateway_id="{{ gtw.id }}" id="{{ gtw.id }}" autocomplete="off">
+                                    <label class="btn cursor-pointer block" for="{{ gtw.id }}"
+                                        style="background: transparent url('{{gtw.logo.logo}}') no-repeat center center; background-size: contain; height:{{gtw.logo.height}}; width:{{gtw.logo.width}};"
+                                        onclick="paymentPrompt('{{ gtw.id }}', {{ gtw.allow_recurrent ? 'true' : 'false' }}, `{{ gtw.title }}`)"
+                                        data-bs-toggle="tooltip" data-bs-title="{{ gtw.title }}"></label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <input type="hidden" name="gateway_id" id="gateway_id">
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="modern-card mb-4">
+                <div class="card-header py-4 px-4 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <h5 class="mb-1 text-xl font-bold text-gray-900 dark:text-white flex items-center">{{ 'Invoice'|trans }}</h5>
+                            <span class="small text-gray-500 dark:text-gray-400">{{ 'You can print this invoice or export it to a PDF file by clicking on the corresponding button.'|trans }}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="flex gap-2 items-center justify-end">
+                                <a href="{{ 'invoice/pdf'|link }}/{{ invoice.hash }}" target="_blank" class="modern-btn-secondary bg-red-600 text-white hover:bg-red-700 border-red-600">{{ 'PDF'|trans }}</a>
+                                <a href="{{ 'invoice/print'|link }}/{{ invoice.hash }}" target="_blank" class="modern-btn-secondary">{{ 'Print'|trans }}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-6">
+                    <div class="container-fluid px-0">
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="well small">
+                                    <h4 class="fw-light mt-2 mb-3 text-2xl text-gray-900 dark:text-white">{{ 'Invoice'|trans }} #{{ nr }}</h4>
+                                    <dl class="row">
+                                        <dt class="col-sm-4 text-gray-500 dark:text-gray-400">{{ 'Invoice Date'|trans }}</dt>
+                                        <dd class="col-sm-8 text-gray-900 dark:text-white">
+                                            {% if invoice.paid_at|trim %}
+                                                {{ invoice.paid_at|format_date }}
+                                            {% else %}
+                                                {{ invoice.created_at|format_date }}
+                                            {% endif %}
+                                        </dd>
+                                        <dt class="col-sm-4 text-gray-500 dark:text-gray-400">{{ 'Due Date'|trans }}</dt>
+                                        <dd class="col-sm-8 text-gray-900 dark:text-white">
+                                            {% if invoice.due_at|trim %}
+                                                {{ invoice.due_at|format_date }}
+                                            {% else %}
+                                                -----
+                                            {% endif %}
+                                        </dd>
+                                        <dt class="col-sm-4 text-gray-500 dark:text-gray-400">{{ 'Status'|trans }}</dt>
+                                        <dd class="col-sm-8">
+                                        <span class="badge fs-7 {% if invoice.status == 'paid' %} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300{% elseif invoice.status == 'unpaid' %}bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300{% endif %} px-2 py-1 rounded-full">
+                                            {{ mf.status_name(invoice.status) }}
+                                        </span>
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4 text-right">
+                                {% if company.logo_url %}
+                                    <img src="{{ company.logo_url }}" alt="{{ company.name }}" class="mb-3 max-h-16 float-right">
+                                {% else %}
+                                    <h2 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">{{ company.name }}</h2>
+                                {% endif %}
+                                <div class="clearfix"></div>
+                                <div class="text-gray-600 dark:text-gray-400 text-sm">
+                                    {{ company.address_1 }}<br>
+                                    {% if company.address_2 %}{{ company.address_2 }}<br>{% endif %}
+                                    {% if company.address_3 %}{{ company.address_3 }}<br>{% endif %}
+                                    {{ company.city }}, {{ company.country }}<br>
+                                    {{ company.tel }}<br>
+                                    {{ company.email }}<br>
+                                    {% if company.vat_number %}{{ 'VAT'|trans }}: {{ company.vat_number }}<br>{% endif %}
+                                    {% if company.account_number %}{{ 'Account'|trans }}: {{ company.account_number }}<br>{% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h5 class="mb-3 text-lg font-bold text-gray-900 dark:text-white">{{ 'Bill to'|trans }}</h5>
+                                <div class="text-gray-600 dark:text-gray-400">
+                                    {% if buyer.company %}<strong>{{ buyer.company }}</strong><br>{% endif %}
+                                    {{ buyer.first_name }} {{ buyer.last_name }}<br>
+                                    {{ buyer.address }}<br>
+                                    {{ buyer.city }}, {{ buyer.state }} {{ buyer.zip }}<br>
+                                    {{ buyer.country }}<br>
+                                    {% if buyer.phone %}{{ buyer.phone }}<br>{% endif %}
+                                    {{ buyer.email }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-md-12 table-responsive">
+                                <table class="table table-striped w-full">
+                                    <thead>
+                                        <tr class="bg-gray-50 dark:bg-gray-800 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                                            <th class="px-4 py-3">#</th>
+                                            <th class="px-4 py-3">{{ 'Description'|trans }}</th>
+                                            <th class="px-4 py-3 text-right">{{ 'Price'|trans }}</th>
+                                            <th class="px-4 py-3 text-right">{{ 'Total'|trans }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                                        {% for i, item in invoice.lines %}
+                                            <tr class="text-gray-900 dark:text-white text-sm">
+                                                <td class="px-4 py-3">{{ i + 1 }}</td>
+                                                <td class="px-4 py-3">
+                                                    {{ item.title }}
+                                                    {% if item.period %}
+                                                        <br><span class="text-xs text-gray-500 dark:text-gray-400">{{ item.period | period_title }}</span>
+                                                    {% endif %}
+                                                    {% if item.quantity > 1 %}
+                                                        <br><span class="text-xs text-gray-500 dark:text-gray-400">{{ item.quantity }} x {{ item.price | money(invoice.currency) }}</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td class="px-4 py-3 text-right">{{ item.price | money(invoice.currency) }}</td>
+                                                <td class="px-4 py-3 text-right">{{ item.total | money(invoice.currency) }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col-md-6 offset-md-6">
+                                <table class="table w-full">
+                                    <tbody class="text-sm text-gray-900 dark:text-white">
+                                        <tr>
+                                            <td class="px-4 py-2 font-medium text-right">{{ 'Subtotal'|trans }}:</td>
+                                            <td class="px-4 py-2 text-right">{{ invoice.subtotal | money(invoice.currency) }}</td>
+                                        </tr>
+                                        {% if invoice.tax > 0 %}
+                                            <tr>
+                                                <td class="px-4 py-2 font-medium text-right">{{ invoice.taxname }} {{ invoice.taxrate }}%:</td>
+                                                <td class="px-4 py-2 text-right">{{ invoice.tax | money(invoice.currency) }}</td>
+                                            </tr>
+                                        {% endif %}
+                                        <tr class="font-bold text-lg">
+                                            <td class="px-4 py-2 text-right">{{ 'Total'|trans }}:</td>
+                                            <td class="px-4 py-2 text-right">{{ invoice.total | money(invoice.currency) }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        {% if invoice.notes %}
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <h5 class="mb-2 text-lg font-bold text-gray-900 dark:text-white">{{ 'Notes'|trans }}</h5>
+                                <div class="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 text-sm">
+                                    {{ invoice.notes | markdown }}
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function paymentPrompt(gateway_id, allow_recurrent, gateway_title) {
+            document.getElementById('gateway_id').value = gateway_id;
+            
+            // Remove active class from all gateways
+            document.querySelectorAll('.invoice-gateway').forEach(el => {
+                el.classList.remove('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+                el.classList.add('border-gray-200', 'dark:border-gray-700');
+            });
+            
+            // Add active class to selected gateway
+            const selectedGateway = document.querySelector(`input[gateway_id="${gateway_id}"]`).closest('.invoice-gateway');
+            if (selectedGateway) {
+                selectedGateway.classList.remove('border-gray-200', 'dark:border-gray-700');
+                selectedGateway.classList.add('border-blue-500', 'bg-blue-50', 'dark:bg-blue-900/20');
+            }
+        }
+    </script>
+{% endblock %}

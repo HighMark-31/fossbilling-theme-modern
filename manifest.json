@@ -1,0 +1,20 @@
+{
+  "name": "FOSSBilling Modern",
+  "version": "1.0.0",
+  "description": "Modern React-like theme with Tailwind CSS - Created by HighMark IT",
+  "icon": "assets/img/theme_screenshot.svg",
+  "author": "HighMark IT",
+  "author_url": "https://fossbilling-theme-modern.highmark.it/",
+  "github_url": "https://github.com/HighMark-31/fossbilling-theme-modern",
+  "markdown_attributes": {
+    "\\League\\CommonMark\\Extension\\Table\\Table": {
+      "class": "min-w-full divide-y divide-gray-200"
+    },
+    "\\League\\CommonMark\\Extension\\CommonMark\\Node\\Inline\\Image": {
+      "class": "rounded-lg shadow-md"
+    },
+    "\\League\\CommonMark\\Extension\\CommonMark\\Node\\Block\\BlockQuote": {
+      "class": "border-l-4 border-blue-500 pl-4 italic"
+    }
+  }
+}

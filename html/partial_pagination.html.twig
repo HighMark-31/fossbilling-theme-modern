@@ -1,0 +1,46 @@
+{% if list.pages > 1 %}
+    <nav class="mt-8" aria-label="{{ 'Pagination'|trans }}">
+        <div class="flex items-center justify-between">
+            <div class="text-sm text-gray-700 dark:text-gray-300">
+                {{ 'Showing'|trans }} 
+                <span class="font-medium">{{ list.start|default(0) + 1 }}</span> 
+                {{ 'to'|trans }} 
+                <span class="font-medium">{{ list.end|default(0) }}</span> 
+                {{ 'of'|trans }} 
+                <span class="font-medium">{{ list.total|default(0) }}</span> 
+                {{ 'results'|trans }}
+            </div>
+            
+            <div class="modern-pagination">
+                {% if list.page != 1 %}
+                    <a href="{{ list.prev }}" class="modern-pagination-item">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        {{ 'Previous'|trans }}
+                    </a>
+                {% endif %}
+
+                {% for page in list.pages %}
+                    {% if page == '...' %}
+                        <span class="px-3 py-2 text-sm text-gray-500 dark:text-gray-400">...</span>
+                    {% else %}
+                        <a href="{{ list.page_links[page] }}" 
+                           class="modern-pagination-item {{ page == list.page ? 'active' }}">
+                            {{ page }}
+                        </a>
+                    {% endif %}
+                {% endfor %}
+
+                {% if list.page != list.pages %}
+                    <a href="{{ list.next }}" class="modern-pagination-item">
+                        {{ 'Next'|trans }}
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+{% endif %}

@@ -1,0 +1,44 @@
+{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
+
+{% block meta_title %}{{ 'Processing payment ...'|trans }}{% endblock %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item"><a href="{{ '/invoice'|link }}">{{ 'Invoices'|trans }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Payment</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="modern-card mb-4">
+            <div class="card-header p-6 border-b border-gray-200 dark:border-gray-700">
+                <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">{{ 'Processing payment ...'|trans }}</h1>
+                <p class="text-gray-500 dark:text-gray-400">{{ 'Thank you for your patience.'|trans }}</p>
+            </div>
+            <div class="card-body p-6">
+                {% if payment.type == 'html' %}
+                    {{ payment.result|raw }}
+                {% endif %}
+                {% if payment.type == 'form' %}
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">{{ 'Redirecting to payment gateway...'|trans }}</h2>
+                <form name="payment_form" action="{{ payment.service_url }}" method="post">
+                    <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}"/>
+                    {% for key, value in payment.result %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}" />
+                    {% endfor %}
+                    <input class="modern-btn-primary cursor-pointer" type="submit" value="{{ 'Please click here to continue if this page does not redirect automatically in 5 seconds'|trans }}" id="payment_button"/>
+                </form>
+
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function() {
+                        document.getElementById('payment_button').style.display = 'none';
+                        document.forms["payment_form"].submit();
+                    });
+                </script>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
+
+{% import "macro_functions.html.twig" as mf %}
+
+{% block meta_title %}{{ 'API Key'|trans }}{% endblock %}
+{% block body_class %}client-api{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">{{ 'API'|trans }}</li>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="modern-card mb-4">
+                <div class="card-header py-4 px-4">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div class="w-100">
+                            <h1 class="mb-1">{{ 'API Key'|trans }}</h1>
+                            <span class="small text-muted">{{ 'API key allows integration with external applications. You will need this key for authentication.'|trans }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-4">
+                    {{ include('partial_pending_messages.html.twig') }}
+                    
+                    <div class="modern-alert modern-alert-warning mb-4">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <div>
+                            <strong>{{ 'Security Warning'|trans }}</strong><br>
+                            {{ 'Keep your API key secret. Do not share it with anyone.'|trans }}
+                        </div>
+                    </div>
+
+                    <form class="api-form" method="post" action="client/profile/api_key_reset" id="change-api-key" data-api-msg="{{ 'API key was changed'|trans }}">
+                        <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}"/>
+                        {% if client.profile_api_key_get %}
+                            <div class="alert alert-danger mb-4" role="alert">
+                                <strong>{{ 'Warning!'|trans }}</strong> {{ 'Resetting the key will break existing applications using it!'|trans }}
+                            </div>
+                        {% endif %}
+                        <div class="mb-4">
+                            <label for="api-key" class="form-label">{{ 'Your API key'|trans }}</label>
+                            <div class="input-group">
+                                <input class="form-control" readonly type="text" value="{{ client.profile_api_key_get }}" id="api-key" style="background-color: #f8f9fa;">
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" type="submit">{{ 'Generate a new key'|trans }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
