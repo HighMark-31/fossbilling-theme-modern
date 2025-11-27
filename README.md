@@ -58,21 +58,10 @@ Your feedback is essential to improve the theme quickly!
 
 ---
 
-## 🛠 Customization
-
-You can modify colors, fonts, or layout by editing the CSS files and Twig templates.
-The theme is built to be easily extended and adaptable to any brand.
-
----
-
-## 🤝 Contributing
+## Contributing & License
 
 Pull requests, ideas, and issues are welcome!
 Feedback helps improve and refine the theme.
-
----
-
-## 📄 License
 
 Released under the **MIT License**.
 Free to use in both personal and commercial projects.
