@@ -3,6 +3,7 @@
 A clean, minimal, and fully responsive theme for **[FOSSBilling](https://github.com/FOSSBilling/FOSSBilling)**, designed to bring a more polished and contemporary look to the client panel.
 The goal is to enhance the user experience with a fresh UI while keeping full compatibility with the platform’s core features.
 
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=HighMark-31.fossbilling-theme-modern)
 ---
 <img width="1918" height="862" alt="image" src="https://github.com/user-attachments/assets/32e1e648-d047-4b63-8160-f72d12942b3c" />
 
