@@ -25,12 +25,16 @@
     var currency=document.querySelector('select.currency_selector');
     if(currency){
       currency.addEventListener('change',function(){
-        if(typeof API!=='undefined'&&API.guest&&API.guest.post){
-          API.guest.post('guest/set-currency',{code:currency.value}).then(function(){
-            if(typeof bb!=='undefined'&&bb.reload){bb.reload();}
-            else{location.reload();}
-            flashMessage('success','Valuta aggiornata');
-          }).catch(function(){flashMessage('error','Impossibile aggiornare la valuta')});
+        if(typeof API!=='undefined'&&API.guest){
+            if (API.guest.post) {
+                API.guest.post('cart/set_currency', { currency: currency.value }, function() {
+                    if(typeof bb !== 'undefined' && bb.reload) { bb.reload(); }
+                    else { location.reload(); }
+                    flashMessage('success', 'Valuta aggiornata');
+                }, function() {
+                    flashMessage('error', 'Impossibile aggiornare la valuta');
+                });
+            }
         }
       });
     }
@@ -55,7 +59,8 @@
     window.addEventListener('resize',function(){if(!isMobile()){toggleMobile(false)}});
 
     Array.prototype.forEach.call(document.querySelectorAll('.order-index .product-card'),function(a){
-      a.addEventListener('click',function(){
+      a.addEventListener('click',function(e){
+          // Let the default link action proceed, but show the loader if present
         var wait=document.querySelector('.wait');
         if(wait){wait.classList.remove('hidden');}
       });
@@ -75,11 +80,33 @@
     if(typeof TomSelect!=='undefined'){
       Array.prototype.forEach.call(document.querySelectorAll('.js-language-selector'),function(el){
         try{
+          var m=document.cookie.match(new RegExp('(?:^| )BBLANG=([^;]+)'));
+          if(m){el.value=decodeURIComponent(m[1]);}
           new TomSelect(el,{
+            copyClassesToDropdown:false,
+            controlClass:'ts-control locale',
+            dropdownClass:'dropdown-menu ts-dropdown',
+            optionClass:'dropdown-item',
+            controlInput:false,
+            items: [el.value],
             create:false,
             render:{
               option:function(data,escape){return '<div>'+((data.customProperties||''))+' '+escape(data.text)+'</div>';},
-              item:function(data,escape){return '<div>'+((data.customProperties||''))+' '+escape(data.text)+'</div>';}
+              item:function(data,escape){return '<div>'+((data.customProperties||''))+' '+escape(data.text)+'</div>'}
+            },
+            onChange: function(value) {
+                 
+                 if(typeof bb !== 'undefined' && bb.cookieCreate) {
+                     bb.cookieCreate("BBLANG", value, 7);
+                 } else {
+                     var d = new Date();
+                     d.setTime(d.getTime() + (7*24*60*60*1000));
+                     var expires = "expires="+ d.toUTCString();
+                     document.cookie = "BBLANG=" + value + ";" + expires + ";path=/";
+                 }
+                 
+                 if(typeof bb !== 'undefined' && bb.reload) { bb.reload(); }
+                 else { location.reload(); }
             }
           });
         }catch(e){}

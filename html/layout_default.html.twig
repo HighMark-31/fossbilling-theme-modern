@@ -103,7 +103,13 @@
                         <img class="h-8 w-auto hide-theme-light" src="{{ company.logo_url_dark }}" alt="{{ company.name }}" title="{{ company.name }}">
                     </a>
                 {% else %}
-                    <a href="{{ '/'|link }}" class="text-xl font-bold modern-logo-text">
+                    <a href="{{ '/'|link }}" class="text-xl font-bold modern-logo-text flex items-center">
+                         {% if company.logo_url %}
+                            <img class="h-8 w-auto mr-2 hide-theme-dark" src="{{ company.logo_url }}" alt="{{ company.name }}" title="{{ company.name }}">
+                         {% endif %}
+                         {% if company.logo_url_dark %}
+                            <img class="h-8 w-auto mr-2 hide-theme-light" src="{{ company.logo_url_dark }}" alt="{{ company.name }}" title="{{ company.name }}">
+                         {% endif %}
                         {{ company.name }}
                     </a>
                 {% endif %}

@@ -3,13 +3,13 @@
 {% endif %}
 <div class="accordion-item">
     <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#order" aria-expanded="false" aria-controls="order">
+        <button class="accordion-button {% if not product %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#order" aria-expanded="{{ product ? 'true' : 'false' }}" aria-controls="order">
             <svg class="svg-icon me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 110 8 4 4 0 010-8m-2 14c-.25 0-.46-.18-.5-.42l-.37-2.65c-.63-.25-1.17-.59-1.69-.99l-2.49 1.01c-.22.08-.49 0-.61-.22l-2-3.46c-.13-.22-.07-.49.12-.64L4.57 13l-.07-1 .07-1L2.46 9.37c-.19-.15-.25-.42-.12-.64l2-3.46c.12-.22.39-.3.61-.22l2.49 1.01c.52-.39 1.06-.73 1.69-.98l.37-2.65C9.54 2.18 9.75 2 10 2h4c.25 0 .46.18.5.42l.37 2.65c.63.25 1.17.59 1.69.98l2.49-1.01c.22-.09.49.01.61.22l2 3.46c.13.22.07.49-.12.64L19.43 11l.07 1-.07 1 2.11 1.63c.19.15.25.42.12.64l-2 3.46c-.12.22-.39.3-.61.22l-2.49-1.01c-.53.39-1.07.73-1.69.98l-.37 2.65c-.04.24-.25.42-.5.42h-4z"/></svg>
             {{ 'Product Configuration'|trans }}
         </button>
     </h2>
     {% if product %}
-    <div id="order" class="accordion-collapse collapse">
+    <div id="order" class="accordion-collapse collapse {% if product %}show{% endif %}">
         <div class="accordion-body">
             <div class="accordion-inner">
                 <form method="post" class="api-form form-{{ product.form_id ? guest.formbuilder_get( {"id":product.form_id}).style.type : 0 }}"

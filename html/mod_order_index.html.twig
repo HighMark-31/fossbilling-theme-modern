@@ -40,18 +40,4 @@ function resizeIframe(obj){obj.style.height=obj.contentWindow.document.documentE
 </script>
 {% endautoescape %}
 {{ include('mod_orderbutton_js.html.twig') }}
-<script>
-document.addEventListener('DOMContentLoaded',function(){
-  var hasProduct = {{ request.product ? 'true' : 'false' }};
-  if(hasProduct){
-    var el=document.getElementById('order');
-    if(el && typeof bootstrap!=='undefined'){
-      var c=bootstrap.Collapse.getOrCreateInstance(el,{toggle:false});
-      c.show();
-      var btn=document.querySelector('button[data-bs-target="#order"]');
-      if(btn){btn.classList.remove('collapsed');btn.setAttribute('aria-expanded','true');}
-    }
-  }
-});
-</script>
 {% endblock %}
