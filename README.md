@@ -7,27 +7,22 @@
 
 A **clean, modern, and fully responsive theme** for [FOSSBilling](https://github.com/FOSSBilling/FOSSBilling) designed to bring a polished, contemporary look to the client panel. Enhance user experience with a fresh UI while maintaining 100% compatibility with FOSSBilling's core features.
 
+## ⚠️ Maintenance Status
+
+**This repository is currently on hold.** I will not be maintaining this theme for the time being. 
+
+- ❌ No active development or updates planned
+- ❌ Issues may not be addressed promptly
+- ✅ **Pull Requests are welcome!** If you'd like to contribute fixes or improvements, feel free to open a PR
+- ✅ I am aware that the theme needs updates and has some issues that should be resolved
+
 ## 🌟 Highlights
 
 - **Modern Design**: Contemporary UI with refined typography, improved spacing, and a professional color palette
 - **Responsive & Mobile-First**: Optimized for mobile, tablet, and desktop devices
 - **Enhanced UX**: Redesigned components for a smoother, more intuitive experience
 - **100% Open Source**: Fully customizable and free for personal and commercial use
-- **Actively Maintained**: Regular updates and bug fixes
 - **Easy Installation**: Simple setup process with zero complications
-
-## 🎬 Live Demo
-
-**Try before installing!** Explore all features in action:
-
-👉 **[https://demo-fossbilling-theme-modern.highmark.it/](https://demo-fossbilling-theme-modern.highmark.it/)**
-
-### Test Credentials
-
-```
-Email:    testaccount@gmail.com
-Password: Test123!
-```
 
 ## ✨ Key Features
 
@@ -160,13 +155,13 @@ All Twig templates are in the `html/` directory. Edit them to change:
 
 ## ⚠️ Important Notice
 
-**This is an actively developed theme.** If you encounter:
-- 🐛 Visual bugs
-- ❌ Functionality issues
-- 📱 Responsive design problems
-- 🔌 Compatibility concerns
+**This repository is currently not actively maintained.** Please be aware that:
+- 🐛 Visual bugs may exist
+- ❌ Functionality issues may not be resolved quickly
+- 📱 Responsive design may have problems
+- 🔌 Compatibility with newer FOSSBilling versions is not guaranteed
 
-**Please open an [Issue](https://github.com/HighMark-31/fossbilling-theme-modern/issues) immediately.** We respond quickly with hotfixes and patches.
+**However, contributions are welcome!** If you'd like to help improve the theme, please open a Pull Request.
 
 ## 🔧 Troubleshooting
 
@@ -209,7 +204,7 @@ rm -rf storage/cache/*
 
 ## 🤝 Contributing
 
-Contributions are welcome! Here's how to help:
+**Contributions are especially welcome given the current maintenance status!** Here's how to help:
 
 1. **Fork** the repository
 2. **Create a branch** for your feature (`git checkout -b feature/amazing-feature`)
@@ -245,21 +240,21 @@ If you find this theme useful, please consider:
 1. **⭐ Star this repository** - It helps reach more developers
 2. **🔗 Share with your network** - Help others discover it
 3. **💬 Leave feedback** - Your suggestions improve the theme
-4. **🐛 Report bugs** - Help us maintain quality
-5. **🤝 Contribute code** - Join our development effort
+4. **🐛 Report bugs** - Help us identify issues
+5. **🤝 Contribute code** - Your PRs are especially valuable now
 
 ## 📞 Contact & Support
 
 - **Issues & Bug Reports**: [GitHub Issues](https://github.com/HighMark-31/fossbilling-theme-modern/issues)
 - **Feature Requests**: [GitHub Discussions](https://github.com/HighMark-31/fossbilling-theme-modern/discussions)
-- **Live Demo**: [https://demo-fossbilling-theme-modern.highmark.it/](https://demo-fossbilling-theme-modern.highmark.it/)
+- **Pull Requests**: [GitHub Pull Requests](https://github.com/HighMark-31/fossbilling-theme-modern/pulls)
 
 ## 📈 Project Stats
 
-- **Stars**: 3+
-- **Forks**: 1+
+- **Stars**: 10+
+- **Forks**: 3+
 - **Contributors**: Open to all
-- **Last Updated**: December 2024
+- **Last Updated**: December 2025
 - **License**: MIT
 
 ---
